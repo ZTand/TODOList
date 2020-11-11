@@ -1,60 +1,51 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
+    <h1>TODOList</h1>
+    <TodoInput @addTodo="addTodo"></TodoInput>
+    <TodoList :todoItems="todoItems" @removeTodo="removeTodo" @changeTodo="changeTodo"></TodoList>
   </div>
 </template>
 
 <script>
+import TodoInput from './components/TodoInput'
+import TodoList from './components/TodoList'
+
 export default {
-  name: 'app',
-  data () {
+  components: {
+    TodoInput: TodoInput,
+    TodoList: TodoList
+  },
+  data() {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      todoItems: []
+    }
+  },
+  methods: {
+    addTodo(item) {
+      this.todoItems.push(item)
+    },
+    removeTodo(index) {
+      this.todoItems.splice(index, 1)
+    },
+    changeTodo({ index, todoItem }) {
+      this.todoItems.splice(index, 1, todoItem)
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style scoped>
+html {
+  box-sizing: border-box;
+}
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  background-color: #aaaaaa;
 }
-
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
+h1 {
+  padding-top: 2rem;
+  letter-spacing: 2px;
+  color: darkblue;
 }
 </style>
