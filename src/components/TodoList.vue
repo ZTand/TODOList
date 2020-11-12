@@ -1,19 +1,19 @@
 <template>
   <transition-group name="list" tag="ul">
-    <li v-for="(todoItem, index) in todoItems" :key="index">
+    <li v-for="(todoItem, index) in todoItems" v-bind:key="todoItem.unikey">
       <div class="itemContainer">
-        <button class="changeBtn" @click="changeTodo(index, todoItem, true)">
+        <button class="changeBtn" @click="changeTodo(index, todoItem.data, true)">
           <i class="toggleBtn far fa-edit"></i>
         </button>
         <div class="item">
-          <div class="itemText" style="display: inline">{{ todoItems[index] }}</div>
+          <div class="itemText" style="display: inline">{{ todoItem.data }}</div>
           <input
             class="itemEdit"
             type="text"
             style="display: none"
-            :value="todoItems[index]"
+            :value="todoItem.data"
             @input="(event) => changeTodo(index, event.target.value, false)"
-            @keypress="checkEnter(index, todoItem)"
+            @keypress="checkEnter(index, todoItem.data)"
           />
         </div>
         <button class="removeBtn" @click="removeTodo(index)"><i class="far fa-trash-alt"></i></button>
@@ -27,7 +27,7 @@ export default {
   props: ['todoItems'],
   methods: {
     checkEnter(index, todoItem) {
-      if (event.keyCode == 13) {
+      if (event.keyCode === 13) {
         this.changeTodo(index, todoItem, true)
       }
     },
@@ -62,8 +62,7 @@ export default {
         }
         edit.focus()
       }
-
-      this.$emit('changeTodo', { index, todoItem })
+      this.$emit('changeTodo', { index, todoItem, b })
     }
   }
 }
@@ -99,5 +98,17 @@ button {
   line-height: 35px;
   padding-left: 16px;
   text-align: left;
+}
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.7s;
+}
+.list-enter {
+  opacity: 0;
+  transform: translateX(10px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(3px);
 }
 </style>
