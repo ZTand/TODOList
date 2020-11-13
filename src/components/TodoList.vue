@@ -6,13 +6,13 @@
           <i class="toggleBtn" :class="iconChoose[index]"></i>
         </button>
         <div class="item">
-          <div class="itemText" :style="divStyle[index]">{{ todoItem.data }}</div>
+          <span class="itemText" v-show="showText[index]">{{ todoItem.data }}</span>
           <form v-on:submit.prevent="() => changeTodo(index, todoItem.data, true)">
             <input
+              v-show="showEdit[index]"
               class="itemEdit"
               type="text"
               ref="input"
-              :style="inputStyle[index]"
               :value="todoItem.data"
               @input="(event) => changeTodo(index, event.target.value, false)"
             />
@@ -31,8 +31,8 @@ export default {
   data() {
     return {
       iconChoose: [],
-      divStyle: [],
-      inputStyle: []
+      showText: [],
+      showEdit: []
     }
   },
   created() {
@@ -40,17 +40,11 @@ export default {
     if (parseData !== null) {
       for (let i = 0; i < parseData.length; i++) {
         this.iconChoose.push({
-          far: true,
-          'fa-edit': true,
-          fas: false,
-          'fa-check': false
+          'far fa-edit': true,
+          'fas fa-check': false
         })
-        this.divStyle.push({
-          display: 'inline'
-        })
-        this.inputStyle.push({
-          display: 'none'
-        })
+        this.showText.push(true)
+        this.showEdit.push(false)
       }
     }
   },
@@ -60,17 +54,10 @@ export default {
     },
     changeTodo(index, todoItem, b) {
       if (b) {
-        this.iconChoose[index].far = !this.iconChoose[index].far
-        this.iconChoose[index]['fa-edit'] = !this.iconChoose[index]['fa-edit']
-        this.iconChoose[index].fas = !this.iconChoose[index].fas
-        this.iconChoose[index]['fa-check'] = !this.iconChoose[index]['fa-check']
-        this.divStyle[index].display === 'inline'
-          ? (this.divStyle[index].display = 'none')
-          : (this.divStyle[index].display = 'inline')
-        this.inputStyle[index].display === 'inline'
-          ? (this.inputStyle[index].display = 'none')
-          : (this.inputStyle[index].display = 'inline')
-
+        this.iconChoose[index]['far fa-edit'] = !this.iconChoose[index]['far fa-edit']
+        this.iconChoose[index]['fas fa-check'] = !this.iconChoose[index]['fas fa-check']
+        this.showText[index] = !this.showText[index]
+        this.showEdit[index] = !this.showEdit[index]
         this.$nextTick(() => {
           this.$refs.input[index].focus()
         })
