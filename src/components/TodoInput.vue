@@ -1,14 +1,16 @@
 <template>
   <div>
-    <input
-      id="input"
-      :class="[isEmpty ? 'HalfOpac' : 'FullOpac']"
-      type="text"
-      v-model="TodoItem"
-      @keypress="checkEnter()"
-      placeholder="할 일 입력"
-    /><!--
+    <form>
+      <input
+        id="input"
+        :class="[isEmpty ? 'HalfOpac' : 'FullOpac']"
+        ref="input"
+        type="text"
+        v-model="todoItem"
+        placeholder="할 일 입력"
+      /><!--
     --><button @click="addTodo"><i class="fas fa-plus" aria-hidden="true"></i></button>
+    </form>
   </div>
 </template>
 
@@ -16,28 +18,23 @@
 export default {
   data() {
     return {
-      TodoItem: ''
+      todoItem: ''
     }
   },
   mounted() {
-    document.getElementById('input').focus()
+    this.$refs.input.focus()
   },
   methods: {
     addTodo() {
-      if (this.TodoItem !== '') {
-        this.$emit('addTodo', this.TodoItem)
-        this.TodoItem = ''
-      }
-    },
-    checkEnter() {
-      if (event.keyCode == 13) {
-        this.addTodo()
+      if (this.todoItem !== '') {
+        this.$emit('addTodo', this.todoItem)
+        this.todoItem = ''
       }
     }
   },
   computed: {
     isEmpty() {
-      return this.TodoItem === ''
+      return this.todoItem === ''
     }
   }
 }

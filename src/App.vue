@@ -24,10 +24,11 @@ export default {
     const loadData = localStorage.getItem('todo')
     if (loadData !== null) {
       const parseData = JSON.parse(loadData)
-      for (let i = 0; i < parseData.length; i++) {
-        let item = new Object()
-        item.data = parseData[i].data
-        item.unikey = parseData[i].unikey
+      for (let data of parseData) {
+        let item = {
+          data: data.data,
+          unikey: data.unikey
+        }
         this.todoItems.push(item)
       }
     }
@@ -37,9 +38,10 @@ export default {
       return Math.random().toString(32)
     },
     addTodo(data) {
-      let item = new Object()
-      item.data = data
-      item.unikey = this.randomID()
+      const item = {
+        data: data,
+        unikey: this.randomID()
+      }
       this.todoItems.push(item)
       this.localStorageUpdate()
     },
@@ -47,25 +49,27 @@ export default {
       this.todoItems.splice(index, 1)
       this.localStorageUpdate()
     },
-    changeTodo({ index, todoItem, b }) {
-      let item = new Object()
-      item.data = todoItem
-      item.unikey = this.todoItems[index].unikey
+    changeTodo({ index, todoItem }) {
+      let item = {
+        data: todoItem,
+        unikey: this.todoItems[index].unikey
+      }
       this.todoItems.splice(index, 1, item)
       this.localStorageUpdate()
     },
     localStorageUpdate() {
       localStorage.clear()
-      let ItemList = new Array()
-      for (let i = 0; i < this.todoItems.length; i++) {
-        let item = new Object()
-        item.unikey = this.todoItems[i].unikey
-        item.index = i
-        item.data = this.todoItems[i].data
+      let ItemList = []
+      let i = 0
+      for (let item of this.todoItems) {
+        let todo = {
+          unikey: item.unikey,
+          index: i++,
+          data: item.data
+        }
         ItemList.push(item)
       }
-      const Data = JSON.stringify(ItemList)
-      localStorage.setItem('todo', Data)
+      localStorage.setItem('todo', JSON.stringify(ItemList))
     }
   }
 }

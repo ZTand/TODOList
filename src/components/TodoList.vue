@@ -1,20 +1,22 @@
 <template>
   <transition-group name="list" tag="ul">
-    <li v-for="(todoItem, index) in todoItems" v-bind:key="todoItem.unikey">
+    <li v-for="(todoItem, index) in todoItems" :key="todoItem.unikey">
       <div class="itemContainer">
         <button class="changeBtn" @click="changeTodo(index, todoItem.data, true)">
-          <i class="toggleBtn far fa-edit"></i>
+          <i class="toggleBtn" :class="iconChoose[index]"></i>
         </button>
         <div class="item">
-          <div class="itemText" style="display: inline">{{ todoItem.data }}</div>
-          <input
-            class="itemEdit"
-            type="text"
-            style="display: none"
-            :value="todoItem.data"
-            @input="(event) => changeTodo(index, event.target.value, false)"
-            @keypress="checkEnter(index, todoItem.data)"
-          />
+          <div class="itemText" :style="divStyle[index]">{{ todoItem.data }}</div>
+          <form v-on:submit.prevent="() => changeTodo(index, todoItem.data, true)">
+            <input
+              class="itemEdit"
+              type="text"
+              ref="input"
+              :style="inputStyle[index]"
+              :value="todoItem.data"
+              @input="(event) => changeTodo(index, event.target.value, false)"
+            />
+          </form>
         </div>
         <button class="removeBtn" @click="removeTodo(index)"><i class="far fa-trash-alt"></i></button>
       </div>
@@ -25,42 +27,53 @@
 <script>
 export default {
   props: ['todoItems'],
-  methods: {
-    checkEnter(index, todoItem) {
-      if (event.keyCode === 13) {
-        this.changeTodo(index, todoItem, true)
+
+  data() {
+    return {
+      iconChoose: [],
+      divStyle: [],
+      inputStyle: []
+    }
+  },
+  created() {
+    const parseData = JSON.parse(localStorage.getItem('todo'))
+    if (parseData !== null) {
+      for (let i = 0; i < parseData.length; i++) {
+        this.iconChoose.push({
+          far: true,
+          'fa-edit': true,
+          fas: false,
+          'fa-check': false
+        })
+        this.divStyle.push({
+          display: 'inline'
+        })
+        this.inputStyle.push({
+          display: 'none'
+        })
       }
-    },
+    }
+  },
+  methods: {
     removeTodo(index) {
       this.$emit('removeTodo', index)
     },
     changeTodo(index, todoItem, b) {
       if (b) {
-        const btn = document.getElementsByClassName('toggleBtn').item(index)
-        if (btn.className === 'toggleBtn far fa-edit') {
-          btn.classList.remove('far')
-          btn.classList.remove('fa-edit')
-          btn.classList.add('fas')
-          btn.classList.add('fa-check')
-        } else {
-          btn.classList.remove('fas')
-          btn.classList.remove('fa-check')
-          btn.classList.add('far')
-          btn.classList.add('fa-edit')
-        }
-        const text = document.getElementsByClassName('itemText').item(index)
-        if (text.style.display == 'none') {
-          text.style.display = 'inline'
-        } else {
-          text.style.display = 'none'
-        }
-        const edit = document.getElementsByClassName('itemEdit').item(index)
-        if (edit.style.display == 'none') {
-          edit.style.display = 'inline'
-        } else {
-          edit.style.display = 'none'
-        }
-        edit.focus()
+        this.iconChoose[index].far = !this.iconChoose[index].far
+        this.iconChoose[index]['fa-edit'] = !this.iconChoose[index]['fa-edit']
+        this.iconChoose[index].fas = !this.iconChoose[index].fas
+        this.iconChoose[index]['fa-check'] = !this.iconChoose[index]['fa-check']
+        this.divStyle[index].display === 'inline'
+          ? (this.divStyle[index].display = 'none')
+          : (this.divStyle[index].display = 'inline')
+        this.inputStyle[index].display === 'inline'
+          ? (this.inputStyle[index].display = 'none')
+          : (this.inputStyle[index].display = 'inline')
+
+        this.$nextTick(() => {
+          this.$refs.input[index].focus()
+        })
       }
       this.$emit('changeTodo', { index, todoItem, b })
     }
@@ -101,7 +114,7 @@ button {
 }
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.7s;
+  transition: all 1s;
 }
 .list-enter {
   opacity: 0;
@@ -109,6 +122,6 @@ button {
 }
 .list-leave-to {
   opacity: 0;
-  transform: translateX(3px);
+  transform: translateX(10px);
 }
 </style>
